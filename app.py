@@ -21,29 +21,36 @@ st.set_page_config(
     page_title="TruthSocial", 
     page_icon="🦅", 
     layout="wide",
-    initial_sidebar_state="expanded" # Menüyü otomatik açar
+    initial_sidebar_state="expanded"
 )
 
 # ---------------------------------------------------------
-# 🎨 TASARIM (SADECE RENKLER - GİZLEME KODU YOK!)
+# 🎨 TASARIM VE GİZLEME AYARLARI (SİMGELER KALDIRILDI)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* BURADAN TÜM GİZLEME KODLARINI SİLDİM. ARTIK HER ŞEY GÖRÜNECEK VE ÇALIŞACAK. */
+    /* 1. SAĞ ÜSTTEKİ GITHUB, EDIT VE MENU SİMGELERİNİ GİZLE */
+    .stAppDeployButton {display:none;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    [data-testid="stHeader"] {visibility: hidden !important;}
     
+    /* En üstteki renkli çizgiyi gizle */
+    [data-testid="stDecoration"] {display: none;}
+
+    /* Alt bilgiyi gizle */
+    footer {visibility: hidden; display: none;}
+
+    /* Başlık Stili */
     .main-title { color: #2c3e50; text-align: center; font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
     
     /* ANALİZ KUTULARI */
     .trust-score-box { font-size: 1.5rem; font-weight: bold; color: white; background-color: #28a745; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
     
     /* KAYNAK LİSTESİ STİLİ */
-    .source-card { 
-        background-color: #f0f2f6; padding: 10px; border-radius: 8px; 
-        margin-bottom: 5px; border-left: 5px solid #0078D4; 
-    }
+    .source-card { background-color: #f0f2f6; padding: 10px; border-radius: 8px; margin-bottom: 5px; border-left: 5px solid #0078D4; }
     .source-link { text-decoration: none; color: #0078D4; font-weight: bold; }
     
-    /* FORUM BLUR VE GÖRSELLERİ */
+    /* FORUM GÖRSELLERİ */
     .blur-container { position: relative; }
     .blurred-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); user-select: none; }
     .login-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 20px; border: 2px solid #FF4B4B; font-weight: bold; color: #FF4B4B; text-align: center; cursor: pointer; width: 80%; }
@@ -52,9 +59,28 @@ st.markdown("""
     .score-label { color: #28a745; font-weight: bold; font-size: 0.85rem; margin-right: 5px; }
     .score-blur { color: transparent; text-shadow: 0 0 5px #999; cursor: not-allowed; background-color: #eee; padding: 2px 5px; border-radius: 5px; user-select: none; }
     .score-visible { color: #fff; background-color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 2px 8px; border-radius: 10px; }
-    
     .forum-card { background-color: #fff; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; }
+
+    /* SAĞ ALT KÖŞE İLETİŞİM KUTUSU */
+    .fixed-contact {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #ffffff;
+        padding: 10px 15px;
+        border-radius: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-size: 14px;
+        font-weight: bold;
+        color: #555;
+        border: 1px solid #eee;
+        z-index: 9999;
+    }
     </style>
+    
+    <div class="fixed-contact">
+        📩 Bize Ulaşın: iletisim@truthsocial.com
+    </div>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
@@ -91,7 +117,7 @@ if 'forum_konulari' not in st.session_state:
     ]
 
 # ---------------------------------------------------------
-# 3. FONKSİYONLAR (HABER MODU AKTİF)
+# 3. FONKSİYONLAR
 # ---------------------------------------------------------
 def internette_ara(sorgu):
     try:
@@ -127,7 +153,7 @@ def teyit_et(iddia, veriler, api_key, ton):
         return "GÜVEN ORANI: %0\n\nBir hata oluştu. API anahtarı 'Secrets' kısmına eklenmemiş olabilir."
 
 # ---------------------------------------------------------
-# 4. YAN MENÜ (BURASI ARTIK KESİN GÖRÜNECEK)
+# 4. YAN MENÜ
 # ---------------------------------------------------------
 with st.sidebar:
     st.markdown("### ⚙️ Ayarlar")
@@ -163,6 +189,17 @@ with st.sidebar:
 # 5. ANA EKRAN
 # ---------------------------------------------------------
 st.markdown('<div class="main-title">TruthSocial</div>', unsafe_allow_html=True)
+
+# --- NEDEN BİZ? KISMI ---
+with st.expander("❓ Neden TruthSocial? (Hakkımızda)"):
+    st.markdown("""
+    **TruthSocial**, internetteki bilgi kirliliğiyle savaşmak için kurulmuş yapay zeka destekli bir doğrulama platformudur.
+    
+    ✅ **Yapay Zeka Destekli:** En son teknolojiyi kullanarak haberleri saniyeler içinde analiz eder.
+    ✅ **Topluluk Odaklı:** Kullanıcılarımız birbirini denetler, puan verir ve bot hesapları engeller.
+    ✅ **Tarafsız:** Sadece verilere ve güvenilir kaynaklara dayanır.
+    """)
+
 tab1, tab2 = st.tabs(["🕵️‍♂️ Haber Doğrulama", "🗣️ Gerçekler Forumu"])
 
 # --- TAB 1: HABER DOĞRULAMA ---
@@ -194,7 +231,6 @@ with tab1:
 
             with st.spinner(f"Son dakika haberleri taranıyor..."):
                 res = internette_ara(sorgu)
-                
                 if not res:
                     st.warning("⚠️ Bu konuda henüz haber ajanslarına düşen bir bilgi yok.")
                     raw_cevap = teyit_et(sorgu, "Güncel haber bulunamadı.", kullanilacak_key, final_ton)
@@ -227,19 +263,44 @@ with tab1:
                     else:
                         st.write("Kaynak bulunamadı.")
 
-# --- TAB 2: GERÇEKLER FORUMU ---
+# --- TAB 2: GERÇEKLER FORUMU (YENİ PUANLAMA SİSTEMİ) ---
 with tab2:
     st.subheader("Gündem")
-    for konu in st.session_state['forum_konulari']:
+    
+    for index, konu in enumerate(st.session_state['forum_konulari']):
         with st.expander(f"📢 {konu['baslik']}"):
+            
+            # YAZAR PUANI
             if st.session_state['premium_uye']:
-                puan_html = f"<span class='score-label'>Güvenirlik Puanı:</span> <span class='score-visible'>{konu['yazar_puan']}/10</span>"
+                puan_html = f"<span class='score-label'>Güvenirlik Puanı:</span> <span class='score-visible'>{konu['yazar_puan']:.1f}/10</span>"
             else:
                 puan_html = "<span class='score-label'>Güvenirlik Puanı:</span> <span class='score-blur' title='Puanı görmek için Premium ol'>XX.X</span>"
+            
             st.markdown(f"<small>Yazar: {konu['yazar']} | {puan_html}</small>", unsafe_allow_html=True)
             
             if st.session_state['giris_yapti']:
                 st.write(konu['icerik'])
+                
+                # --- YENİ PUAN VERME SİSTEMİ ---
+                st.markdown("---")
+                with st.popover("⭐ Bu İçeriği Değerlendir"):
+                    st.write("**Bu içerik yararlı mıydı?**")
+                    degerlendirme = st.radio("Fikriniz:", ["Seçiniz", "Evet 👍", "Hayır 👎"], key=f"radio_{index}")
+                    
+                    if degerlendirme != "Seçiniz":
+                        kullanici_puani = st.slider("1-10 Arası Puan Ver:", 1, 10, 5, key=f"slider_{index}")
+                        aciklama = st.text_input("Neden?", key=f"reason_{index}")
+                        
+                        if st.button("Puanı Gönder", key=f"vote_btn_{index}"):
+                            # Simülasyon: Puan ortalaması alınıyor
+                            eski_puan = konu['yazar_puan']
+                            yeni_puan = (eski_puan + kullanici_puani) / 2
+                            konu['yazar_puan'] = yeni_puan
+                            st.success(f"Oyunuz kaydedildi! Yazarın yeni güven puanı: {yeni_puan:.1f}")
+                            time.sleep(1)
+                            st.rerun()
+                # -------------------------------
+
                 st.markdown("---")
                 for yorum in konu['yorumlar']:
                     if st.session_state['premium_uye']:
@@ -247,6 +308,7 @@ with tab2:
                     else:
                         y_puan = "<span class='score-blur' title='Premium Gerekli'>XX.X</span>"
                     st.markdown(f"**{yorum['user']}** {y_puan}: {yorum['msg']}", unsafe_allow_html=True)
+                
                 yeni = st.text_input("Yorum:", key=f"t_{konu['id']}")
                 if st.button("Gönder", key=f"b_{konu['id']}"):
                     konu['yorumlar'].append({"user": st.session_state['aktif_kullanici'], "msg": yeni, "puan": 5.0})

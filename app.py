@@ -21,34 +21,44 @@ st.set_page_config(
     page_title="TruthSocial", 
     page_icon="🦅", 
     layout="wide",
-    initial_sidebar_state="expanded" # Menü açık başlasın
+    initial_sidebar_state="expanded"
 )
 
 # ---------------------------------------------------------
-# 🎨 TASARIM (GİZLEME YOK - MENÜ GARANTİ)
+# 🛑 GİZLİLİK AYARLARI (KEDİ VE BUTONLARI YOK ETME)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* Sadece en alttaki 'Made with Streamlit' yazısını gizliyoruz. */
-    /* Üst tarafa DOKUNMUYORUZ ki menü butonu kaybolmasın. */
-    footer {visibility: hidden; display: none;}
+    /* 1. SAĞ ÜSTTEKİ TOOLBAR'I KOMPLE GİZLE (GitHub, Kedi, Ayarlar) */
+    [data-testid="stToolbar"] {
+        visibility: hidden;
+        display: none !important;
+    }
+    
+    /* 2. ÜSTTEKİ RENKLİ ÇİZGİYİ GİZLE */
+    [data-testid="stDecoration"] {
+        visibility: hidden;
+        display: none;
+    }
 
-    /* Başlık Stili */
+    /* 3. ALT BİLGİYİ GİZLE */
+    footer {
+        visibility: hidden;
+        display: none;
+    }
+    
+    /* NOT: Header'ı gizlemiyoruz ki SOL MENÜ OKU çalışsın! */
+
+    /* --- TASARIM --- */
     .main-title { color: #2c3e50; text-align: center; font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
-    
-    /* ANALİZ KUTULARI */
     .trust-score-box { font-size: 1.5rem; font-weight: bold; color: white; background-color: #28a745; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
-    
-    /* KAYNAK LİSTESİ STİLİ */
     .source-card { background-color: #f0f2f6; padding: 10px; border-radius: 8px; margin-bottom: 5px; border-left: 5px solid #0078D4; }
     .source-link { text-decoration: none; color: #0078D4; font-weight: bold; }
     
-    /* FORUM GÖRSELLERİ */
     .blur-container { position: relative; }
     .blurred-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); user-select: none; }
     .login-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 20px; border: 2px solid #FF4B4B; font-weight: bold; color: #FF4B4B; text-align: center; cursor: pointer; width: 80%; }
     
-    /* PUAN GÖRÜNÜMÜ */
     .score-label { color: #28a745; font-weight: bold; font-size: 0.85rem; margin-right: 5px; }
     .score-blur { color: transparent; text-shadow: 0 0 5px #999; cursor: not-allowed; background-color: #eee; padding: 2px 5px; border-radius: 5px; user-select: none; }
     .score-visible { color: #fff; background-color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 2px 8px; border-radius: 10px; }
@@ -273,7 +283,6 @@ with tab2:
             if st.session_state['giris_yapti']:
                 st.write(konu['icerik'])
                 
-                # --- PUAN VERME SİSTEMİ (KİBAR MESAJLI) ---
                 st.markdown("---")
                 with st.popover("⭐ Bu İçeriği Değerlendir"):
                     st.write("**Bu içerik yararlı mıydı?**")
@@ -287,10 +296,9 @@ with tab2:
                             eski_puan = konu['yazar_puan']
                             yeni_puan = (eski_puan + kullanici_puani) / 2
                             konu['yazar_puan'] = yeni_puan
-                            st.success("Değerlendirmeniz için teşekkürler!") # Kibar mesaj
+                            st.success("Değerlendirmeniz için teşekkürler!")
                             time.sleep(1)
                             st.rerun()
-                # -------------------------------
 
                 st.markdown("---")
                 for yorum in konu['yorumlar']:

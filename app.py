@@ -15,17 +15,27 @@ except:
     SABIT_API_KEY = "" 
 
 # ---------------------------------------------------------
-# 1. SAYFA AYARLARI (Simge: Kartal 🦅)
+# 1. SAYFA AYARLARI (Menü varsayılan olarak AÇIK)
 # ---------------------------------------------------------
-st.set_page_config(page_title="TruthSocial", page_icon="🦅", layout="wide")
+st.set_page_config(
+    page_title="TruthSocial", 
+    page_icon="🦅", 
+    layout="wide",
+    initial_sidebar_state="expanded" # BU SATIR MENÜYÜ OTOMATİK AÇAR
+)
 
 # ---------------------------------------------------------
-# 🛑 TASARIM VE GİZLEME AYARLARI
+# 🛑 TASARIM VE GİZLEME AYARLARI (DÜZELTİLDİ)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* Üst şerit ve Alt bilgiyi gizle (Tertemiz görünüm) */
-    .stAppHeader {display: none;}
+    /* Sadece üstteki Toolbar'ı (GitHub, Manage app) gizle, ama Header kalsın */
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    
+    /* En üstteki renkli ince çizgiyi gizle */
+    [data-testid="stDecoration"] {display: none;}
+
+    /* Alt bilgiyi gizle */
     footer {visibility: hidden;}
     
     .main-title { color: #2c3e50; text-align: center; font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
@@ -86,13 +96,12 @@ if 'forum_konulari' not in st.session_state:
     ]
 
 # ---------------------------------------------------------
-# 3. FONKSİYONLAR (GÜNCELLENDİ: HABER MODU)
+# 3. FONKSİYONLAR
 # ---------------------------------------------------------
 def internette_ara(sorgu):
     try:
         with DDGS() as ddgs:
-            # GÜNCELLEME: .news() modu kullanıldı. Sadece Haberleri tarar.
-            # Böylece F1 sonuçları gibi güncel olayları yakalar, spam siteleri eler.
+            # Sadece Haberleri Tara
             results = list(ddgs.news(sorgu, region='tr-tr', max_results=5))
         return results
     except Exception as e:
@@ -194,15 +203,12 @@ with tab1:
             with st.spinner(f"Son dakika haberleri taranıyor..."):
                 res = internette_ara(sorgu)
                 
-                # SONUÇ GÖSTERİMİ
                 if not res:
                     st.warning("⚠️ Bu konuda henüz haber ajanslarına düşen bir bilgi yok.")
-                    # Haber yoksa yapay zeka genel bilgiyle cevaplamasın diye boş gönderiyoruz
                     raw_cevap = teyit_et(sorgu, "Güncel haber bulunamadı.", kullanilacak_key, final_ton)
                 else:
                     raw_cevap = teyit_et(sorgu, res, kullanilacak_key, final_ton)
                 
-                # Güven Skorunu Ayıkla
                 match = re.search(r"GÜVEN ORANI: %(\d+)", raw_cevap)
                 skor = match.group(1) if match else "?"
                 temiz_cevap = re.sub(r"GÜVEN ORANI: %\d+", "", raw_cevap).strip()
@@ -214,15 +220,12 @@ with tab1:
                 st.success("Analiz Sonucu:")
                 st.write(temiz_cevap)
                 
-                # KAYNAKLARI TEMİZ LİSTELEME (Kod görünümü yok!)
                 with st.expander("🔗 Bulunan Kaynaklar (Tıkla ve Git)"):
                     if res:
                         for item in res:
-                            # ddgs.news bazen 'title', bazen 'body' döner, garantilemek için:
                             baslik = item.get('title', 'Kaynak Bağlantısı')
                             link = item.get('url', item.get('href', '#'))
                             kaynak_tarih = item.get('date', '')
-                            # Temiz kart görünümü
                             st.markdown(f"""
                             <div class="source-card">
                                 <a href="{link}" target="_blank" class="source-link">{baslik}</a><br>
@@ -237,8 +240,6 @@ with tab2:
     st.subheader("Gündem")
     for konu in st.session_state['forum_konulari']:
         with st.expander(f"📢 {konu['baslik']}"):
-            
-            # YEŞİL PUAN + BLURLU RAKAM
             if st.session_state['premium_uye']:
                 puan_html = f"<span class='score-label'>Güvenirlik Puanı:</span> <span class='score-visible'>{konu['yazar_puan']}/10</span>"
             else:

@@ -15,55 +15,48 @@ except:
     SABIT_API_KEY = "" 
 
 # ---------------------------------------------------------
-# 1. SAYFA AYARLARI
+# 1. SAYFA AYARLARI (Menü açık başlar)
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="TruthSocial", 
     page_icon="🦅", 
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded" 
 )
 
 # ---------------------------------------------------------
-# 🛑 GİZLİLİK AYARLARI (KEDİ VE BUTONLARI YOK ETME)
+# 🛑 CSS İLE MENÜYÜ SABİTLEME VE GEREKSİZLERİ GİZLEME
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* 1. SAĞ ÜSTTEKİ TOOLBAR'I KOMPLE GİZLE (GitHub, Kedi, Ayarlar) */
-    [data-testid="stToolbar"] {
-        visibility: hidden;
-        display: none !important;
-    }
+    /* 1. MENÜYÜ KAPATMA BUTONUNU YOK ET (X veya Ok işareti) */
+    /* Bu sayede kullanıcı menüyü kapatamaz, hep açık kalır */
+    [data-testid="stSidebarCollapsedControl"] {display: none;}
     
-    /* 2. ÜSTTEKİ RENKLİ ÇİZGİYİ GİZLE */
-    [data-testid="stDecoration"] {
-        visibility: hidden;
-        display: none;
-    }
+    /* Sidebar'ın içindeki kapatma okunu da gizle (Garanti olsun) */
+    section[data-testid="stSidebar"] > div > div:nth-child(2) {display: none;}
 
-    /* 3. ALT BİLGİYİ GİZLE */
-    footer {
-        visibility: hidden;
-        display: none;
-    }
+    /* 2. SAĞ ÜSTTEKİ SİMGELERİ GİZLE (GitHub, Kedi, Ayarlar) */
+    [data-testid="stToolbar"] {visibility: hidden !important;}
     
-    /* NOT: Header'ı gizlemiyoruz ki SOL MENÜ OKU çalışsın! */
+    /* 3. RENKLİ ÇİZGİYİ VE ALT BİLGİYİ GİZLE */
+    [data-testid="stDecoration"] {display: none;}
+    footer {visibility: hidden; display: none;}
 
     /* --- TASARIM --- */
     .main-title { color: #2c3e50; text-align: center; font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
     .trust-score-box { font-size: 1.5rem; font-weight: bold; color: white; background-color: #28a745; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
     .source-card { background-color: #f0f2f6; padding: 10px; border-radius: 8px; margin-bottom: 5px; border-left: 5px solid #0078D4; }
     .source-link { text-decoration: none; color: #0078D4; font-weight: bold; }
+    .score-label { color: #28a745; font-weight: bold; font-size: 0.85rem; margin-right: 5px; }
+    .score-blur { color: transparent; text-shadow: 0 0 5px #999; cursor: not-allowed; background-color: #eee; padding: 2px 5px; border-radius: 5px; user-select: none; }
+    .score-visible { color: #fff; background-color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 2px 8px; border-radius: 10px; }
     
+    /* FORUM GÖRSELLERİ */
     .blur-container { position: relative; }
     .blurred-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); user-select: none; }
     .login-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 20px; border: 2px solid #FF4B4B; font-weight: bold; color: #FF4B4B; text-align: center; cursor: pointer; width: 80%; }
     
-    .score-label { color: #28a745; font-weight: bold; font-size: 0.85rem; margin-right: 5px; }
-    .score-blur { color: transparent; text-shadow: 0 0 5px #999; cursor: not-allowed; background-color: #eee; padding: 2px 5px; border-radius: 5px; user-select: none; }
-    .score-visible { color: #fff; background-color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 2px 8px; border-radius: 10px; }
-    .forum-card { background-color: #fff; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; }
-
     /* SAĞ ALT KÖŞE İLETİŞİM KUTUSU */
     .fixed-contact {
         position: fixed;

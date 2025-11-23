@@ -21,29 +21,18 @@ st.set_page_config(
     page_title="TruthSocial", 
     page_icon="🦅", 
     layout="wide",
-    initial_sidebar_state="expanded" # Menü açık başlasın
+    initial_sidebar_state="expanded"
 )
 
 # ---------------------------------------------------------
-# 🛑 TASARIM DÜZELTME (MENÜ DÜĞMESİNİ GERİ GETİRDİK!)
+# 🎨 TASARIM (ÜST ÇUBUK GİZLEME İPTAL EDİLDİ)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* 1. SAĞ ÜSTTEKİ (GITHUB/MANAGE APP) BUTONLARINI GİZLE */
-    [data-testid="stToolbar"] {
-        visibility: hidden;
-        height: 0px;
-    }
-    
-    /* 2. AMA SOL ÜSTTEKİ MENÜ AÇMA DÜĞMESİNE DOKUNMA! (Burası düzeltildi) */
-    [data-testid="stSidebarCollapsedControl"] {
-        display: block !important;
-        visibility: visible !important;
-    }
-
-    /* 3. ALT BİLGİYİ GİZLE */
+    /* Sadece en alttaki 'Made with Streamlit' yazısını gizliyoruz. */
     footer {visibility: hidden; display: none;}
-    [data-testid="stDecoration"] {display: none;}
+    
+    /* ÜST ÇUBUĞA DOKUNMUYORUZ - KEDİ VE MENÜ GERİ GELDİ */
 
     /* --- GENEL TASARIM --- */
     .main-title { color: #2c3e50; text-align: center; font-size: 3rem; font-weight: 800; letter-spacing: -1px; }

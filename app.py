@@ -15,50 +15,54 @@ except:
     SABIT_API_KEY = "" 
 
 # ---------------------------------------------------------
-# 1. SAYFA AYARLARI (Menü varsayılan olarak AÇIK)
+# 1. SAYFA AYARLARI (Menüyü Zorla Açıyoruz)
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="TruthSocial", 
     page_icon="🦅", 
     layout="wide",
-    initial_sidebar_state="expanded" # BU SATIR MENÜYÜ OTOMATİK AÇAR
+    initial_sidebar_state="expanded" # BU ÇOK ÖNEMLİ: Menü açık başlasın
 )
 
 # ---------------------------------------------------------
-# 🛑 TASARIM VE GİZLEME AYARLARI (DÜZELTİLDİ)
+# 🛑 TASARIM DÜZELTME (Menü Düğmesi Geri Geldi)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* Sadece üstteki Toolbar'ı (GitHub, Manage app) gizle, ama Header kalsın */
-    [data-testid="stToolbar"] {visibility: hidden !important;}
+    /* SAĞ ÜSTTEKİ BUTONLARI GİZLE (Github, Deploy, Manage App) */
+    [data-testid="stToolbar"] {
+        visibility: hidden;
+        height: 0%;
+        position: fixed;
+    }
     
-    /* En üstteki renkli ince çizgiyi gizle */
-    [data-testid="stDecoration"] {display: none;}
+    /* EN ÜSTTEKİ RENKLİ ÇİZGİYİ GİZLE */
+    [data-testid="stDecoration"] {
+        visibility: hidden;
+        display: none;
+    }
 
-    /* Alt bilgiyi gizle */
-    footer {visibility: hidden;}
+    /* FOOTER GİZLE */
+    footer {
+        visibility: hidden;
+        display: none;
+    }
+
+    /* NOT: .stAppHeader'ı gizlemiyoruz, çünkü menü düğmesi orada yaşıyor! */
     
     .main-title { color: #2c3e50; text-align: center; font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
     
-    /* ANALİZ KUTULARI */
+    /* DİĞER STİLLER */
     .trust-score-box { font-size: 1.5rem; font-weight: bold; color: white; background-color: #28a745; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
-    
-    /* KAYNAK LİSTESİ STİLİ */
-    .source-card { 
-        background-color: #f0f2f6; padding: 10px; border-radius: 8px; 
-        margin-bottom: 5px; border-left: 5px solid #0078D4; 
-    }
+    .source-card { background-color: #f0f2f6; padding: 10px; border-radius: 8px; margin-bottom: 5px; border-left: 5px solid #0078D4; }
     .source-link { text-decoration: none; color: #0078D4; font-weight: bold; }
-    
-    /* FORUM GÖRSELLERİ */
     .blur-container { position: relative; }
     .blurred-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); user-select: none; }
     .login-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 20px; border: 2px solid #FF4B4B; font-weight: bold; color: #FF4B4B; text-align: center; cursor: pointer; width: 80%; }
-    
-    /* PUAN GÖRÜNÜMÜ */
     .score-label { color: #28a745; font-weight: bold; font-size: 0.85rem; margin-right: 5px; }
     .score-blur { color: transparent; text-shadow: 0 0 5px #999; cursor: not-allowed; background-color: #eee; padding: 2px 5px; border-radius: 5px; user-select: none; }
     .score-visible { color: #fff; background-color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 2px 8px; border-radius: 10px; }
+    .forum-card { background-color: #fff; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -101,11 +105,9 @@ if 'forum_konulari' not in st.session_state:
 def internette_ara(sorgu):
     try:
         with DDGS() as ddgs:
-            # Sadece Haberleri Tara
             results = list(ddgs.news(sorgu, region='tr-tr', max_results=5))
         return results
     except Exception as e:
-        print(f"Hata: {e}")
         return []
 
 def teyit_et(iddia, veriler, api_key, ton):
@@ -119,7 +121,6 @@ def teyit_et(iddia, veriler, api_key, ton):
     prompt = f"""
     KARAKTERİN: {rol}
     GÖREVİN: İddiayı, Arama Sonuçlarına göre analiz et.
-    
     KURALLAR:
     1. Arama sonuçlarında konuyla alakasız (oyun, reklam) şeyler varsa YOK SAY.
     2. Cevabın en başına mutlaka "GÜVEN ORANI: %XX" yaz (0-100 arası).
@@ -202,7 +203,6 @@ with tab1:
 
             with st.spinner(f"Son dakika haberleri taranıyor..."):
                 res = internette_ara(sorgu)
-                
                 if not res:
                     st.warning("⚠️ Bu konuda henüz haber ajanslarına düşen bir bilgi yok.")
                     raw_cevap = teyit_et(sorgu, "Güncel haber bulunamadı.", kullanilacak_key, final_ton)
@@ -244,7 +244,6 @@ with tab2:
                 puan_html = f"<span class='score-label'>Güvenirlik Puanı:</span> <span class='score-visible'>{konu['yazar_puan']}/10</span>"
             else:
                 puan_html = "<span class='score-label'>Güvenirlik Puanı:</span> <span class='score-blur' title='Puanı görmek için Premium ol'>XX.X</span>"
-            
             st.markdown(f"<small>Yazar: {konu['yazar']} | {puan_html}</small>", unsafe_allow_html=True)
             
             if st.session_state['giris_yapti']:

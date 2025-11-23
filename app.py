@@ -15,53 +15,44 @@ except:
     SABIT_API_KEY = "" 
 
 # ---------------------------------------------------------
-# 1. SAYFA AYARLARI (Menüyü Zorla Açıyoruz)
+# 1. SAYFA AYARLARI (Menü Açık Başlasın)
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="TruthSocial", 
     page_icon="🦅", 
     layout="wide",
-    initial_sidebar_state="expanded" # BU ÇOK ÖNEMLİ: Menü açık başlasın
+    initial_sidebar_state="expanded" # Menüyü otomatik açar
 )
 
 # ---------------------------------------------------------
-# 🛑 TASARIM DÜZELTME (Menü Düğmesi Geri Geldi)
+# 🎨 TASARIM (SADECE RENKLER - GİZLEME KODU YOK!)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* SAĞ ÜSTTEKİ BUTONLARI GİZLE (Github, Deploy, Manage App) */
-    [data-testid="stToolbar"] {
-        visibility: hidden;
-        height: 0%;
-        position: fixed;
-    }
-    
-    /* EN ÜSTTEKİ RENKLİ ÇİZGİYİ GİZLE */
-    [data-testid="stDecoration"] {
-        visibility: hidden;
-        display: none;
-    }
-
-    /* FOOTER GİZLE */
-    footer {
-        visibility: hidden;
-        display: none;
-    }
-
-    /* NOT: .stAppHeader'ı gizlemiyoruz, çünkü menü düğmesi orada yaşıyor! */
+    /* BURADAN TÜM GİZLEME KODLARINI SİLDİM. ARTIK HER ŞEY GÖRÜNECEK VE ÇALIŞACAK. */
     
     .main-title { color: #2c3e50; text-align: center; font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
     
-    /* DİĞER STİLLER */
+    /* ANALİZ KUTULARI */
     .trust-score-box { font-size: 1.5rem; font-weight: bold; color: white; background-color: #28a745; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
-    .source-card { background-color: #f0f2f6; padding: 10px; border-radius: 8px; margin-bottom: 5px; border-left: 5px solid #0078D4; }
+    
+    /* KAYNAK LİSTESİ STİLİ */
+    .source-card { 
+        background-color: #f0f2f6; padding: 10px; border-radius: 8px; 
+        margin-bottom: 5px; border-left: 5px solid #0078D4; 
+    }
     .source-link { text-decoration: none; color: #0078D4; font-weight: bold; }
+    
+    /* FORUM BLUR VE GÖRSELLERİ */
     .blur-container { position: relative; }
     .blurred-text { color: transparent; text-shadow: 0 0 8px rgba(0,0,0,0.5); user-select: none; }
     .login-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 0.95); padding: 10px 20px; border-radius: 20px; border: 2px solid #FF4B4B; font-weight: bold; color: #FF4B4B; text-align: center; cursor: pointer; width: 80%; }
+    
+    /* PUAN GÖRÜNÜMÜ */
     .score-label { color: #28a745; font-weight: bold; font-size: 0.85rem; margin-right: 5px; }
     .score-blur { color: transparent; text-shadow: 0 0 5px #999; cursor: not-allowed; background-color: #eee; padding: 2px 5px; border-radius: 5px; user-select: none; }
     .score-visible { color: #fff; background-color: #28a745; font-weight: bold; font-size: 0.8rem; padding: 2px 8px; border-radius: 10px; }
+    
     .forum-card { background-color: #fff; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; }
     </style>
 """, unsafe_allow_html=True)
@@ -100,7 +91,7 @@ if 'forum_konulari' not in st.session_state:
     ]
 
 # ---------------------------------------------------------
-# 3. FONKSİYONLAR
+# 3. FONKSİYONLAR (HABER MODU AKTİF)
 # ---------------------------------------------------------
 def internette_ara(sorgu):
     try:
@@ -136,7 +127,7 @@ def teyit_et(iddia, veriler, api_key, ton):
         return "GÜVEN ORANI: %0\n\nBir hata oluştu. API anahtarı 'Secrets' kısmına eklenmemiş olabilir."
 
 # ---------------------------------------------------------
-# 4. YAN MENÜ
+# 4. YAN MENÜ (BURASI ARTIK KESİN GÖRÜNECEK)
 # ---------------------------------------------------------
 with st.sidebar:
     st.markdown("### ⚙️ Ayarlar")
@@ -203,6 +194,7 @@ with tab1:
 
             with st.spinner(f"Son dakika haberleri taranıyor..."):
                 res = internette_ara(sorgu)
+                
                 if not res:
                     st.warning("⚠️ Bu konuda henüz haber ajanslarına düşen bir bilgi yok.")
                     raw_cevap = teyit_et(sorgu, "Güncel haber bulunamadı.", kullanilacak_key, final_ton)

@@ -15,7 +15,7 @@ except:
     SABIT_API_KEY = "" 
 
 # ---------------------------------------------------------
-# 1. SAYFA AYARLARI
+# 1. SAYFA AYARLARI (Menü Açık Başlasın)
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="TruthSocial", 
@@ -25,16 +25,16 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# 🎨 TASARIM AYARLARI (MENÜ BUTONU GERİ GELDİ)
+# 🎨 TASARIM VE GİZLEME AYARLARI (SİMGELER KALDIRILDI)
 # ---------------------------------------------------------
 st.markdown("""
     <style>
-    /* 1. SADECE SAĞ ÜSTTEKİ SİMGELERİ GİZLE (Menü butonu kalsın) */
+    /* 1. SAĞ ÜSTTEKİ GITHUB, EDIT VE MENU SİMGELERİNİ GİZLE */
     .stAppDeployButton {display:none;}
     [data-testid="stToolbar"] {visibility: hidden !important;}
+    [data-testid="stHeader"] {visibility: hidden !important;}
     
-    /* DİKKAT: stHeader'ı gizlemiyoruz, yoksa menü butonu gider! 
-       Bunun yerine decoration'ı (renkli çizgiyi) kaldırıyoruz. */
+    /* En üstteki renkli çizgiyi gizle */
     [data-testid="stDecoration"] {display: none;}
 
     /* Alt bilgiyi gizle */
@@ -263,13 +263,14 @@ with tab1:
                     else:
                         st.write("Kaynak bulunamadı.")
 
-# --- TAB 2: GERÇEKLER FORUMU ---
+# --- TAB 2: GERÇEKLER FORUMU (YENİ PUANLAMA SİSTEMİ) ---
 with tab2:
     st.subheader("Gündem")
     
     for index, konu in enumerate(st.session_state['forum_konulari']):
         with st.expander(f"📢 {konu['baslik']}"):
             
+            # YAZAR PUANI
             if st.session_state['premium_uye']:
                 puan_html = f"<span class='score-label'>Güvenirlik Puanı:</span> <span class='score-visible'>{konu['yazar_puan']:.1f}/10</span>"
             else:
@@ -280,7 +281,7 @@ with tab2:
             if st.session_state['giris_yapti']:
                 st.write(konu['icerik'])
                 
-                # --- PUAN VERME SİSTEMİ (GÜNCELLENDİ) ---
+                # --- YENİ PUAN VERME SİSTEMİ ---
                 st.markdown("---")
                 with st.popover("⭐ Bu İçeriği Değerlendir"):
                     st.write("**Bu içerik yararlı mıydı?**")
@@ -291,11 +292,11 @@ with tab2:
                         aciklama = st.text_input("Neden?", key=f"reason_{index}")
                         
                         if st.button("Puanı Gönder", key=f"vote_btn_{index}"):
+                            # Simülasyon: Puan ortalaması alınıyor
                             eski_puan = konu['yazar_puan']
                             yeni_puan = (eski_puan + kullanici_puani) / 2
                             konu['yazar_puan'] = yeni_puan
-                            # MESAJ DEĞİŞTİRİLDİ:
-                            st.success("Değerlendirmeniz için teşekkürler!")
+                            st.success(f"Oyunuz kaydedildi! Yazarın yeni güven puanı: {yeni_puan:.1f}")
                             time.sleep(1)
                             st.rerun()
                 # -------------------------------
